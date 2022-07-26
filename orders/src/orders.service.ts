@@ -1,5 +1,6 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
 import { InjectModel } from '@nestjs/mongoose';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { Model } from 'mongoose';
@@ -13,6 +14,7 @@ export class OrdersService implements OnModuleInit {
   constructor(
     private readonly httpService: HttpService,
     @InjectModel(Order.name) private orderModel: Model<OrderDocument>,
+    @Inject('ORDERS_SERVICE') private client: ClientProxy,
   ) {}
 
   private readonly logger = new Logger(OrdersService.name);
@@ -28,7 +30,10 @@ export class OrdersService implements OnModuleInit {
       orders.data.slice(skip).map((order) => {
         const createdOrder = new this.orderModel(order);
         this.logger.debug('Saving order', createdOrder.id);
-        return createdOrder.save();
+        return Promise.all([
+          createdOrder.save(),
+          this.client.emit('new_order', order),
+        ]);
       }),
     );
   }

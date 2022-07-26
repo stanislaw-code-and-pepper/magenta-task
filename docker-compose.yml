@@ -23,5 +23,7 @@ services:
   nats:
     image: "nats:latest"
     restart: always
+    entrypoint: ["nats-server", "-DV"]
     ports:
       - 4222:4222
+      - 8222:8222

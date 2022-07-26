@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ScheduleModule } from '@nestjs/schedule';
 import { HttpModule } from '@nestjs/axios';
 import { Order, OrderSchema } from './schemas/order.schema';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
   imports: [
@@ -12,6 +13,15 @@ import { Order, OrderSchema } from './schemas/order.schema';
     MongooseModule.forFeature([{ name: Order.name, schema: OrderSchema }]),
     ScheduleModule.forRoot(),
     HttpModule,
+    ClientsModule.register([
+      {
+        name: 'ORDERS_SERVICE',
+        transport: Transport.NATS,
+        options: {
+          servers: [process.env.NATS_URL],
+        },
+      },
+    ]),
   ],
   controllers: [OrdersController],
   providers: [OrdersService],
