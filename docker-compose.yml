@@ -1,0 +1,24 @@
+version: "3"
+services:
+  orders:
+    build: ./orders
+    restart: always
+    hostname: orders
+    env_file:
+      - .env
+  order_db:
+    image: "mongo:latest"
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_DATABASE}
+      MONGO_USER: ${MONGO_USER}
+      MONGO_PASSWORD: ${MONGO_PASSWORD}
+    ports:
+      - 27017:27017
+  nats:
+    image: "nats:latest"
+    restart: always
+    ports:
+      - 4222:4222
