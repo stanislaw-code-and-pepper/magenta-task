@@ -6,6 +6,9 @@ services:
     hostname: orders
     env_file:
       - .env
+    depends_on:
+      - nats
+      - orders_db
   orders_db:
     image: "mongo:latest"
     restart: always
@@ -26,6 +29,9 @@ services:
     hostname: products
     env_file:
       - .env
+    depends_on:
+      - nats
+      - products_db
   products_db:
     image: "mongo:latest"
     restart: always
