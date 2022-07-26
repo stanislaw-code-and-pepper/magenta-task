@@ -6,17 +6,20 @@ services:
     hostname: orders
     env_file:
       - .env
-  order_db:
+  orders_db:
     image: "mongo:latest"
     restart: always
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
-      MONGO_INITDB_DATABASE: ${MONGO_DATABASE}
-      MONGO_USER: ${MONGO_USER}
-      MONGO_PASSWORD: ${MONGO_PASSWORD}
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: Str0000ngPassword!
+      MONGO_INITDB_DATABASE: orders
+      MONGO_USER: orders
+      MONGO_PASSWORD: Password123
     ports:
       - 27017:27017
+    volumes:
+      - "./db/data/db-files:/data/db"
+      - "./db/init/:/docker-entrypoint-initdb.d/"
   nats:
     image: "nats:latest"
     restart: always
