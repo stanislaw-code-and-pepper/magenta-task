@@ -18,7 +18,27 @@ services:
     ports:
       - 27017:27017
     volumes:
-      - "./db/data/db-files:/data/db"
+      - "./db/orders-data/db-files:/data/db"
+      - "./db/init/:/docker-entrypoint-initdb.d/"
+  products:
+    build: ./products
+    restart: always
+    hostname: products
+    env_file:
+      - .env
+  products_db:
+    image: "mongo:latest"
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: Str0000ngPassword!
+      MONGO_INITDB_DATABASE: products
+      MONGO_USER: products
+      MONGO_PASSWORD: Password123
+    ports:
+      - 27018:27017
+    volumes:
+      - "./db/products-data/db-files:/data/db"
       - "./db/init/:/docker-entrypoint-initdb.d/"
   nats:
     image: "nats:latest"
