@@ -14,7 +14,10 @@ export class Product {
   price: number;
 
   @Prop()
-  totalNumber: number;
+  totalProfit: number;
+
+  @Prop()
+  orderCount: number;
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);

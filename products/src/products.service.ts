@@ -24,7 +24,19 @@ export class ProductsService {
     return this.productModel.findOneAndUpdate({ id }, product);
   }
 
-  processOrder(data: Product) {
-    this.logger.debug(data);
+  findMostProfitable(limit: number) {
+    return this.productModel
+      .find()
+      .sort({ totalProfit: -1 })
+      .limit(limit)
+      .exec();
+  }
+
+  findMostOftenBought(limit: number) {
+    return this.productModel
+      .find()
+      .sort({ orderCount: -1 })
+      .limit(limit)
+      .exec();
   }
 }
