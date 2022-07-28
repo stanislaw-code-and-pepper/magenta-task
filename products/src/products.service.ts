@@ -60,6 +60,9 @@ export class ProductsService {
           upsert: true,
         },
       );
+      this.logger.debug(
+        `Updating product ${item.product.name}(${item.product.id})`,
+      );
     }
   }
 }

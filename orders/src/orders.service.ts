@@ -53,7 +53,7 @@ export class OrdersService implements OnModuleInit {
     do {
       orders = await this.processPage(currentPage, ordersOnLastPage);
       currentPage++;
-    } while (orders.length > 0);
+    } while (orders.length > ordersOnLastPage);
   }
 
   onModuleInit() {
