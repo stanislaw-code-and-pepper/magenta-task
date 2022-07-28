@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { Order } from './schemas/order.schema';
 import { Product } from './schemas/product.schema';
 import { ProductDocument } from './schemas/product.schema';
 
@@ -12,19 +13,6 @@ export class ProductsService {
     @InjectModel(Product.name) private productModel: Model<ProductDocument>,
   ) {}
   private readonly logger = new Logger(ProductsService.name);
-
-  findById(id: string) {
-    return this.productModel.findOne({ id }).exec();
-  }
-
-  create(product: Product) {
-    const createdProduct = new this.productModel(product);
-    return createdProduct.save();
-  }
-
-  update(id: string, product: Partial<Omit<Product, 'id'>>) {
-    return this.productModel.findOneAndUpdate({ id }, product);
-  }
 
   findMostProfitable(limit: number) {
     return this.productModel
@@ -51,5 +39,27 @@ export class ProductsService {
       .limit(limit)
       .select(COMMON_FIELDS)
       .exec();
+  }
+
+  async processOrder(order: Order) {
+    const orderDate = order.date.slice(0, 10);
+    for (const item of order.items) {
+      await this.productModel.findOneAndUpdate(
+        { id: item.product.id },
+        {
+          $inc: {
+            orderCount: 1,
+            totalProfit: item.quantity * item.product.price,
+            [`orderCountPerDay.${orderDate}`]: 1,
+          },
+          $setOnInsert: {
+            ...item.product,
+          },
+        },
+        {
+          upsert: true,
+        },
+      );
+    }
   }
 }
