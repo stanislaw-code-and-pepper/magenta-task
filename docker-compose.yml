@@ -7,8 +7,11 @@ services:
     env_file:
       - .env
     depends_on:
-      - nats
+      - rabbitmq
       - orders_db
+    networks:
+      - services
+
   orders_db:
     image: "mongo:latest"
     restart: always
@@ -20,9 +23,12 @@ services:
       MONGO_PASSWORD: Password123
     ports:
       - 27017:27017
+    networks:
+      - services
     volumes:
       - "./db/orders-data/db-files:/data/db"
       - "./db/init/:/docker-entrypoint-initdb.d/"
+
   products:
     build: ./products
     restart: always
@@ -30,8 +36,13 @@ services:
     env_file:
       - .env
     depends_on:
-      - nats
+      - rabbitmq
       - products_db
+    networks:
+      - services
+    ports:
+      - 3000:3000
+
   products_db:
     image: "mongo:latest"
     restart: always
@@ -43,13 +54,24 @@ services:
       MONGO_PASSWORD: Password123
     ports:
       - 27018:27017
+    networks:
+      - services
     volumes:
       - "./db/products-data/db-files:/data/db"
       - "./db/init/:/docker-entrypoint-initdb.d/"
-  nats:
-    image: "nats:latest"
-    restart: always
-    entrypoint: ["nats-server", "-DV"]
+
+  rabbitmq:
+    image: "rabbitmq:3-management-alpine"
+    hostname: rabbitmq
     ports:
-      - 4222:4222
-      - 8222:8222
+      - 5672:5672
+      - 15672:15672
+    networks:
+      - services
+    volumes:
+      - .rabbitmq/data/:/var/lib/rabbitmq/
+      - .rabbitmq/log/:/var/log/rabbitmq
+
+networks:
+  services:
+    driver: bridge

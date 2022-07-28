@@ -16,9 +16,13 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
     ClientsModule.register([
       {
         name: 'ORDERS_SERVICE',
-        transport: Transport.NATS,
+        transport: Transport.RMQ,
         options: {
-          servers: [process.env.NATS_URL],
+          urls: [process.env.RABBITMQ_URL],
+          queue: 'products_queue',
+          queueOptions: {
+            durable: false,
+          },
         },
       },
     ]),

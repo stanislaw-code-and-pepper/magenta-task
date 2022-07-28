@@ -13,7 +13,7 @@ export class ProductsController {
   @EventPattern('new_order')
   async handleNewOrder(order: Order) {
     const orderDate = order.date.slice(0, 10);
-    order.items.forEach(async (item) => {
+    for (const item of order.items) {
       const product = await this.productsService.findById(item.product.id);
       if (product) {
         await this.productsService.update(product.id, {
@@ -24,6 +24,9 @@ export class ProductsController {
             [orderDate]: (product.orderCountPerDay[orderDate] || 0) + 1,
           },
         });
+        this.logger.debug(
+          `Product ${item.product.name}(${item.product.id}) updated`,
+        );
       } else {
         await this.productsService.create({
           ...item.product,
@@ -33,8 +36,11 @@ export class ProductsController {
             [orderDate]: 1,
           },
         });
+        this.logger.debug(
+          `Product ${item.product.name}(${item.product.id}) created`,
+        );
       }
-    });
+    }
   }
 
   @Get('profitable')

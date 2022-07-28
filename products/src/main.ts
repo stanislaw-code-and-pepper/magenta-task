@@ -5,9 +5,13 @@ import { ProductsModule } from './products.module';
 async function bootstrap() {
   const app = await NestFactory.create(ProductsModule);
   app.connectMicroservice({
-    transport: Transport.NATS,
+    transport: Transport.RMQ,
     options: {
-      servers: [process.env.NATS_URL],
+      urls: [process.env.RABBITMQ_URL],
+      queue: 'products_queue',
+      queueOptions: {
+        durable: false,
+      },
     },
   });
 
