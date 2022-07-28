@@ -33,8 +33,6 @@ class Item {
   quantity: number;
 }
 
-// const OrderSchema = SchemaFactory.createForClass(Order);
-
 @Schema()
 export class Order {
   @Prop({ unique: true })

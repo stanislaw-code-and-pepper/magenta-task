@@ -4,6 +4,8 @@ import { Model } from 'mongoose';
 import { Product } from './schemas/product.schema';
 import { ProductDocument } from './schemas/product.schema';
 
+const COMMON_FIELDS = 'id -_id name price totalProfit orderCount';
+
 @Injectable()
 export class ProductsService {
   constructor(
@@ -26,7 +28,7 @@ export class ProductsService {
 
   findMostProfitable(limit: number) {
     return this.productModel
-      .find()
+      .find({}, COMMON_FIELDS)
       .sort({ totalProfit: -1 })
       .limit(limit)
       .exec();
@@ -34,7 +36,7 @@ export class ProductsService {
 
   findMostOftenBought(limit: number) {
     return this.productModel
-      .find()
+      .find({}, COMMON_FIELDS)
       .sort({ orderCount: -1 })
       .limit(limit)
       .exec();
@@ -47,6 +49,7 @@ export class ProductsService {
         [`orderCountPerDay.${date}`]: -1,
       })
       .limit(limit)
+      .select(COMMON_FIELDS)
       .exec();
   }
 }

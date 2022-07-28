@@ -49,8 +49,10 @@ export class ProductsController {
 
   @Get('often_bought_yesterday')
   handleMostProfitableYesterday() {
-    const yesterday = dayjs().subtract(1, 'D').format('YYYY-MM-DD');
-    console.log(yesterday);
+    const yesterday = dayjs()
+      .startOf('day')
+      .subtract(1, 'day')
+      .format('YYYY-MM-DD');
     return this.productsService.findMostProfitablePerDay(yesterday, 10);
   }
 }
