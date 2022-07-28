@@ -4,5 +4,4 @@ RUN mkdir -p /var/www/products
 WORKDIR /var/www/products
 ADD . /var/www/products
 RUN npm install
-# CMD npm run build && npm run start:prod
-CMD npm start
+CMD npm run build && npm run start:prod
