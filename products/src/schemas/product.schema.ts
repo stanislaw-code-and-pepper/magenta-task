@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Types } from 'mongoose';
 
 export type ProductDocument = Product & Document;
 
@@ -18,6 +19,9 @@ export class Product {
 
   @Prop()
   orderCount: number;
+
+  @Prop({ type: Types.Map })
+  orderCountPerDay: Record<string, number>;
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);

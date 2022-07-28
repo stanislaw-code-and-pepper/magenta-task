@@ -41,7 +41,7 @@ export class Order {
   id: string;
 
   @Prop()
-  date: Date;
+  date: string;
 
   @Prop({ type: Customer })
   customer: Customer;

@@ -26,6 +26,7 @@
     "@nestjs/microservices": "^9.0.5",
     "@nestjs/mongoose": "^9.2.0",
     "@nestjs/platform-express": "^9.0.0",
+    "dayjs": "^1.11.4",
     "mongoose": "^6.4.7",
     "nats": "^2.7.1",
     "reflect-metadata": "^0.1.13",

@@ -39,4 +39,14 @@ export class ProductsService {
       .limit(limit)
       .exec();
   }
+
+  findMostProfitablePerDay(date: string, limit: number) {
+    return this.productModel
+      .find({ [`orderCountPerDay.${date}`]: { $exists: true } })
+      .sort({
+        [`orderCountPerDay.${date}`]: -1,
+      })
+      .limit(limit)
+      .exec();
+  }
 }
