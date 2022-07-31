@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Order } from './schemas/order.schema';
+import { NewOrderDto } from './dto/new-order.dto';
 import { Product } from './schemas/product.schema';
 import { ProductDocument } from './schemas/product.schema';
 
@@ -41,7 +41,7 @@ export class ProductsService {
       .exec();
   }
 
-  async processOrder(order: Order) {
+  async processOrder(order: NewOrderDto) {
     const orderDate = order.date.slice(0, 10);
     for (const item of order.items) {
       await this.productModel.findOneAndUpdate(

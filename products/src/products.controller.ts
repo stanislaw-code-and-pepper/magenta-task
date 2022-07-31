@@ -1,9 +1,17 @@
-import { Controller, Get, Logger } from '@nestjs/common';
-import { EventPattern } from '@nestjs/microservices';
+import {
+  Controller,
+  Get,
+  Logger,
+  UseFilters,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
+import { EventPattern, Payload } from '@nestjs/microservices';
 import * as dayjs from 'dayjs';
+import { NewOrderDto } from './dto/new-order.dto';
+import { RpcValidationFilter } from './filter/rpcValidation.filter';
 
 import { ProductsService } from './products.service';
-import { Order } from './schemas/order.schema';
 
 @Controller('products')
 export class ProductsController {
@@ -11,7 +19,9 @@ export class ProductsController {
   private readonly logger = new Logger(ProductsController.name);
 
   @EventPattern('new_order')
-  handleNewOrder(order: Order) {
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @UseFilters(new RpcValidationFilter())
+  handleNewOrder(@Payload() order: NewOrderDto) {
     return this.productsService.processOrder(order);
   }
 
