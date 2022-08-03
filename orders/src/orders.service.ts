@@ -8,6 +8,12 @@ import { Order, OrderDocument } from './schemas/order.schema';
 
 const API_URL = 'https://recruitment-api.dev.flipfit.io/orders';
 const PAGE_SIZE = 1000;
+const DELAY = 3000;
+
+const delay = (n: number) =>
+  new Promise((resolve) => {
+    setTimeout(resolve, n);
+  });
 
 @Injectable()
 export class OrdersService implements OnModuleInit {
@@ -30,10 +36,9 @@ export class OrdersService implements OnModuleInit {
       orders.data.slice(skip).map((order) => {
         const createdOrder = new this.orderModel(order);
         this.logger.debug('Saving order', createdOrder.id);
-        return Promise.all([
-          createdOrder.save(),
-          this.client.emit('new_order', order),
-        ]);
+        return createdOrder
+          .save()
+          .then(() => this.client.emit('new_order', order));
       }),
     );
   }
@@ -53,6 +58,7 @@ export class OrdersService implements OnModuleInit {
     do {
       orders = await this.processPage(currentPage, ordersOnLastPage);
       currentPage++;
+      await delay(DELAY);
     } while (orders.length > ordersOnLastPage);
   }
 
